@@ -46,12 +46,12 @@ jobs:
       - run:
           name: "Install requirements for generation tool"
           command: python -m pip install --user --requirement tools/generation/requirements.txt
-      # - run:
-      #     name: "Install requirements for lint tool"
-      #     command: python -m pip install --user --requirement tools/lint/requirements.txt
-      # - run:
-      #     name: "Test the generation tool"
-      #     command: ./tools/generation/test/run.py
+      - run:
+          name: "Install requirements for lint tool"
+          command: python -m pip install --user --requirement tools/lint/requirements.txt
+      - run:
+          name: "Test the generation tool"
+          command: ./tools/generation/test/run.py
       # - run:
       #     name: "Test the lint tool"
       #     command: ./tools/lint/test/run.py
