@@ -17,7 +17,7 @@ class TestGeneration(unittest.TestCase):
             [ex, 'create', '-o', OUT_DIR, '-p', relpath],
             stdout=subprocess.PIPE)
         stdout, stderr = sp.communicate()      
-        print(stdout,stderr,stdout,stderr) 
+        print(stdout,stderr,"stdout,stderr") 
         return dict(stdout=stdout, stderr=stderr, returncode=sp.returncode)
 
     # def getFiles(self, path):
