@@ -16,42 +16,42 @@ class TestGeneration(unittest.TestCase):
         sp = subprocess.Popen(
             [ex, 'create', '-o', OUT_DIR, '-p', relpath],
             stdout=subprocess.PIPE)
-        stdout, stderr = sp.communicate()      
-        print(stdout,stderr,"stdout,stderr") 
+        stdout, stderr = sp.communicate()   
+        print(stdout.decode(),"输出子进程结果")   
         return dict(stdout=stdout, stderr=stderr, returncode=sp.returncode)
 
-    # def getFiles(self, path):
-    #     names = []
-    #     for root, _, fileNames in os.walk(path):
-    #         for fileName in filter(lambda x: x[0] != '.', fileNames):
-    #             names.append(os.path.join(root, fileName))
-    #     names.sort()
-    #     return names
+    def getFiles(self, path):
+        names = []
+        for root, _, fileNames in os.walk(path):
+            for fileName in filter(lambda x: x[0] != '.', fileNames):
+                names.append(os.path.join(root, fileName))
+        names.sort()
+        return names
 
-    # def compareTrees(self, targetName):
-    #     expectedPath = os.path.join(EXPECTED_DIR, targetName)
-    #     actualPath = os.path.join(OUT_DIR, targetName)
+    def compareTrees(self, targetName):
+        expectedPath = os.path.join(EXPECTED_DIR, targetName)
+        actualPath = os.path.join(OUT_DIR, targetName)
+        expectedFiles = self.getFiles(expectedPath)
+        actualFiles = self.getFiles(actualPath)
+        print(actualPath,"actualPath")
 
-    #     expectedFiles = self.getFiles(expectedPath)
-    #     actualFiles = self.getFiles(actualPath)
+        self.assertListEqual(
+            [os.path.relpath(x, expectedPath) for x in expectedFiles],
+            [os.path.relpath(x, actualPath) for x in actualFiles])
 
-    #     self.assertListEqual(
-    #         [os.path.relpath(x, expectedPath) for x in expectedFiles],
-    #         [os.path.relpath(x, actualPath) for x in actualFiles])
+        for expectedFile, actualFile in zip(expectedFiles, actualFiles):
+            with open(expectedFile) as expectedHandle:
+                with open(actualFile) as actualHandle:
+                    self.assertMultiLineEqual(
+                        expectedHandle.read(),
+                        actualHandle.read())
 
-    #     for expectedFile, actualFile in zip(expectedFiles, actualFiles):
-    #         with open(expectedFile) as expectedHandle:
-    #             with open(actualFile) as actualHandle:
-    #                 self.assertMultiLineEqual(
-    #                     expectedHandle.read(),
-    #                     actualHandle.read())
-
-    # def tearDown(self):
-    #     shutil.rmtree(OUT_DIR, ignore_errors=True)
+    def tearDown(self):
+        shutil.rmtree(OUT_DIR, ignore_errors=True)
 
     def test_glob(self):
         result = self.fixture('glob.case')
-        # self.assertEqual(result['returncode'], 0)
+        self.assertEqual(result['returncode'], 0)
         # self.compareTrees('glob')
 
     # def test_glob_expr(self):
@@ -87,6 +87,8 @@ class TestGeneration(unittest.TestCase):
     #     result = self.fixture('indent-string-template.case')
     #     self.assertEqual(result['returncode'], 0)
     #     self.compareTrees('indentation')
+
+    
 
 if __name__ == '__main__':
     unittest.main()
